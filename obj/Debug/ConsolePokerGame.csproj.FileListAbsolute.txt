@@ -1,0 +1,8 @@
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\bin\Debug\ConsolePokerGame.exe.config
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\obj\Debug\ConsolePokerGame.csprojResolveAssemblyReference.cache
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\bin\Debug\ConsolePokerGame.exe
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\bin\Debug\ConsolePokerGame.pdb
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\bin\Debug\nunit.framework.dll
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\bin\Debug\nunit.framework.xml
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\obj\Debug\ConsolePokerGame.exe
+c:\users\imran\documents\visual studio 2015\Projects\ConsolePokerGame\ConsolePokerGame\obj\Debug\ConsolePokerGame.pdb
