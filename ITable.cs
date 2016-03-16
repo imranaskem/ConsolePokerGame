@@ -10,11 +10,12 @@ namespace ConsolePokerGame
     {
         int MainPot { get; }
         int CurrentBet { get; }
-        List<Player> Players { get; }
+        List<IPlayer> Players { get; }
         Card[] Board { get; }
         string Flop { get; }
         string Turn { get; }
         string FullBoard { get; }
+        int MinRaiseSize { get; }
                
         void BlindsIn(IConsole console, IDealer dealer);
         void AddToPot();

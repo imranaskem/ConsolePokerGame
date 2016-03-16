@@ -11,7 +11,8 @@ namespace ConsolePokerGame
         private string[] speech = { "Blinds in please, small is 2 and big is 5",
                                         "Check or bet?",
                                         "Call, fold or raise?",
-                                        "How much?"};
+                                        "How much?",
+                                        "How much would you like to raise? (Please enter the total raise size)"};
         private bool firstAction = false;
         private string[] check =  { "c", "C", "check", "Check" };
         private string[] call = { "c", "C", "call", "Call" };
@@ -115,7 +116,7 @@ namespace ConsolePokerGame
                 {
                     console.WriteLine(this.Say(3));
                     console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
-                    player.Bet(console);
+                    player.Bet(table, console);
 
                     table.SetCurrentBet(player.AmountBet);
 
@@ -141,7 +142,9 @@ namespace ConsolePokerGame
 
                 if (this.raise.Contains(response))
                 {
-
+                    console.WriteLine(this.Say(4));
+                    console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
+                    player.Raise(table, console);
                 }
             }
         }

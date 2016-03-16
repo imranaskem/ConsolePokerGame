@@ -22,30 +22,24 @@ namespace ConsolePokerGame
 
         [Test]
         public static void SetupTest()
-        {
-            Table table = new Table();
-
+        {          
             List<string> response = new List<string> { "4" };
 
             TestConsoleWrapper console = new TestConsoleWrapper(response);
 
-            table.Setup(console);
+            Table table = new Table(console);            
 
             Assert.That(table.Players.Count, Is.EqualTo(4));
         }
 
         [Test]
         public static void PlayerCreation()
-        {
-            Table table = new Table();
-
-            Dealer dealer = new Dealer();
-
+        {         
             List<string> response = new List<string> { "4" };
 
             TestConsoleWrapper console = new TestConsoleWrapper(response);
 
-            table.Setup(console);
+            Table table = new Table(console);            
 
             Assert.That(table.MainPot, Is.EqualTo(0));
             Assert.That(table.Players[0].Name, Is.EqualTo("Player 1"));
@@ -56,22 +50,17 @@ namespace ConsolePokerGame
 
         [Test]
         public static void BlindTest()
-        {
-            Table table = new Table();
-
-            Dealer dealer = new Dealer();
-
-            ConsoleWrapper console = new ConsoleWrapper();
+        {           
+            Dealer dealer = new Dealer();           
 
             List<string> response = new List<string> { "4" };
 
             TestConsoleWrapper answers = new TestConsoleWrapper(response);
 
-            table.Setup(answers);
+            Table table = new Table(answers);
+                        
+            table.BlindsIn(answers, dealer);
 
-            table.BlindsIn(console, dealer);
-
-            Assert.That(table.MainPot, Is.EqualTo(7));
             Assert.That(table.Players[0].Chips, Is.EqualTo(498));
             Assert.That(table.Players[1].Chips, Is.EqualTo(495));
         }
@@ -79,7 +68,7 @@ namespace ConsolePokerGame
         [Test]
         public static void DealTest()
         {
-            Table table = new Table();
+            
 
             Dealer dealer = new Dealer();
 
@@ -87,11 +76,26 @@ namespace ConsolePokerGame
 
             TestConsoleWrapper answers = new TestConsoleWrapper(response);
 
-            table.Setup(answers);
-
-            dealer.DealToPlayers(table);           
+            Table table = new Table(answers);
+                        
+            dealer.DealToPlayers(table, answers);           
 
             Assert.That(table.Players[0].HoleCards[0], Is.TypeOf(typeof(Card)));
+        }
+
+        [Test]
+        public static void MinRaiseSize()
+        {
+            List<IPlayer> players = new List<IPlayer>();
+
+            players.Add(new TestPlayer(10));
+            players.Add(new TestPlayer(30));
+            players.Add(new TestPlayer(50));
+            players.Add(new TestPlayer(20));
+
+            TestTable table = new TestTable(players);
+
+            Assert.That(table.MinRaiseSize, Is.EqualTo(70));
         }
     }
 }

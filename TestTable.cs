@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace ConsolePokerGame
 {
-    public class Table : ITable
-    {
-        private readonly string instructions = "Welcome to the console poker game. When you are asked a question please respond with the letter or word of your selection.";
-        private readonly string numberOfPlayers = "How many players today?";
+    public class TestTable : ITable
+    {        
         private readonly int sb = 2;
         private readonly int bb = 5;
 
-        public int MainPot { get; private set; }
-        public int CurrentBet { get; private set; }
-        public int SBPlayer { get; private set; }
-        public int BBPlayer { get; private set; }
-        public List<IPlayer> Players { get; private set; }
-        public Card[] Board { get; private set; }
+        public int MainPot { get; set; }
+        public int CurrentBet { get; set; }
+        public int SBPlayer { get; set; }
+        public int BBPlayer { get; set; }
+        public List<IPlayer> Players { get; set; }
+        public Card[] Board { get; set; }
 
         public string Flop
         {
@@ -70,11 +68,11 @@ namespace ConsolePokerGame
                 int difference = 0;
 
                 foreach (IPlayer player in sortedlist)
-                {
+                {                   
                     if (count == 0) firstbet = player.AmountBet;
 
                     secondbet = player.AmountBet;
-
+                    
                     if (count == 1) difference = firstbet - secondbet;
 
                     if (difference > (firstbet - secondbet)) difference = firstbet - secondbet;
@@ -90,86 +88,59 @@ namespace ConsolePokerGame
             }
         }
 
-        public Table(IConsole console)
+        public TestTable(List<IPlayer> players)
+        {
+            this.Players = players;
+            this.MainPot = 0;
+            this.CurrentBet = 0;
+            this.SBPlayer = 0;
+            this.BBPlayer = 1;
+            this.Board = new Card[5];
+        }
+
+        public TestTable(int players)
         {
             this.Players = new List<IPlayer>();
             this.MainPot = 0;
             this.CurrentBet = 0;
             this.SBPlayer = 0;
             this.BBPlayer = 1;
-            this.Board = new Card[5];
-
-            int players;
-
-            console.WriteLine(this.instructions);
-            console.WriteLine(this.numberOfPlayers);
-            console.WriteLine();
-
-            var response = console.ReadLine();
-
-            if (!int.TryParse(response, out players))
-            {
-                console.WriteLine();
-                console.WriteLine("That isn't a number, program exiting...");
-                Environment.Exit(1);
-            }
+            this.Board = new Card[5];                       
 
             for (int i = 1; i <= players; i++)
             {
-                this.Players.Add(new Player("Player " + i.ToString(), 500));
+                this.Players.Add(new TestPlayer("Player " + i.ToString(), 500));
             }
-        }       
+        }
 
         public void BlindsIn(IConsole console, IDealer dealer)
         {
-            console.WriteLine(dealer.Say(0));
-            console.WriteLine(this.Players[this.SBPlayer].Name + " small blind please");
-            console.WriteLine(this.Players[this.BBPlayer].Name + " big blind please");
-
-            this.Players[this.SBPlayer].Blind(this.sb);
-            this.Players[this.BBPlayer].Blind(this.bb);
-
-            this.SetCurrentBet(this.bb);            
-        }        
+            throw new NotImplementedException();
+        }
 
         public void AddToPot()
         {
-            foreach (Player player in this.Players)
-            {
-                this.MainPot += player.AmountBet; 
-            }
-        }
-
-        public void AddFlop(Card firstcard, Card secondcard, Card thirdcard)
-        {
-            this.Board[0] = firstcard;
-            this.Board[1] = secondcard;
-            this.Board[2] = thirdcard;
-        }
-
-        public void AddTurn(Card turn)
-        {
-            this.Board[3] = turn;
-        }
-
-        public void AddRiver(Card river)
-        {
-            this.Board[4] = river;
+            throw new NotImplementedException();
         }
 
         public void SetCurrentBet(int bet)
         {
-            this.CurrentBet = bet;
-
-            this.SetCallAmountsForAllPlayers();
+            throw new NotImplementedException();
         }
 
-        private void SetCallAmountsForAllPlayers()
+        public void AddFlop(Card firstcard, Card secondcard, Card thirdcard)
         {
-            foreach (Player player in this.Players)
-            {
-                player.SetCall(this.CurrentBet);
-            }
+            throw new NotImplementedException();
+        }
+
+        public void AddTurn(Card turn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddRiver(Card river)
+        {
+            throw new NotImplementedException();
         }
     }
 }

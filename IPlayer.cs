@@ -16,7 +16,8 @@ namespace ConsolePokerGame
         Card[] HoleCards { get; }
         string Hand { get; }
 
-        void Bet(IConsole console);
+        void Bet(ITable table, IConsole console);
+        void Raise(ITable table, IConsole console);
         void SetCall(int bet);
         void Call();
         void Fold();
