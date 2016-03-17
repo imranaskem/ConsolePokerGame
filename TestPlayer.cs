@@ -31,7 +31,7 @@ namespace ConsolePokerGame
         public TestPlayer(int bet)
         {
             this.Name = string.Empty;
-            this.Chips = 0;
+            this.Chips = 500;
             this.AmountToCall = 0;
             this.AmountBet = bet;
             this.InHand = true;
@@ -109,7 +109,34 @@ namespace ConsolePokerGame
 
         public void Raise(ITable table, IConsole console)
         {
+            int amount;
 
+            bool parsed = false;
+
+            do
+            {
+                console.WriteLine("Player has " + this.Chips.ToString() + " chips remaining");
+                console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
+
+                var response = console.ReadLine();
+
+                if (!int.TryParse(response, out amount))
+                {
+                    console.WriteLine();
+                    throw new InvalidOperationException("That is not a number, please try again");
+                }
+
+                if (amount > this.Chips) throw new InvalidOperationException("Player does not have enough chips");
+
+                if (amount < table.MinRaiseSize) throw new InvalidOperationException("Raise is not big enough, should be at least " + table.MinRaiseSize.ToString());
+
+                parsed = true;
+            }
+            while (!parsed);
+
+            this.AmountBet = amount;
+
+            table.SetCurrentBet(amount);
         }
     }
 }

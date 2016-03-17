@@ -17,7 +17,7 @@ namespace ConsolePokerGame
         string Hand { get; }
 
         void Bet(ITable table, IConsole console);
-        void Raise(ITable table, IConsole console);
+        bool Raise(ITable table, IConsole console);
         void SetCall(int bet);
         void Call();
         void Fold();

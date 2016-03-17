@@ -88,9 +88,22 @@ namespace ConsolePokerGame
             }
         }
 
-        public TestTable(List<IPlayer> players)
+        public TestTable(List<IPlayer> players) : this()
         {
-            this.Players = players;
+            this.Players = players;            
+        }
+
+        public TestTable(int players) : this()
+        {            
+            for (int i = 1; i <= players; i++)
+            {
+                this.Players.Add(new TestPlayer("Player " + i.ToString(), 500));
+            }
+        }
+
+        public TestTable()
+        {
+            this.Players = new List<IPlayer>();
             this.MainPot = 0;
             this.CurrentBet = 0;
             this.SBPlayer = 0;
@@ -98,49 +111,56 @@ namespace ConsolePokerGame
             this.Board = new Card[5];
         }
 
-        public TestTable(int players)
-        {
-            this.Players = new List<IPlayer>();
-            this.MainPot = 0;
-            this.CurrentBet = 0;
-            this.SBPlayer = 0;
-            this.BBPlayer = 1;
-            this.Board = new Card[5];                       
-
-            for (int i = 1; i <= players; i++)
-            {
-                this.Players.Add(new TestPlayer("Player " + i.ToString(), 500));
-            }
-        }
-
         public void BlindsIn(IConsole console, IDealer dealer)
         {
-            throw new NotImplementedException();
+            console.WriteLine(dealer.Say(0));
+            console.WriteLine(this.Players[this.SBPlayer].Name + " small blind please");
+            console.WriteLine(this.Players[this.BBPlayer].Name + " big blind please");
+
+            this.Players[this.SBPlayer].Blind(this.sb);
+            this.Players[this.BBPlayer].Blind(this.bb);
+
+            this.SetCurrentBet(this.bb);
         }
 
         public void AddToPot()
         {
-            throw new NotImplementedException();
-        }
-
-        public void SetCurrentBet(int bet)
-        {
-            throw new NotImplementedException();
+            foreach (IPlayer player in this.Players)
+            {
+                this.MainPot += player.AmountBet;
+            }
         }
 
         public void AddFlop(Card firstcard, Card secondcard, Card thirdcard)
         {
-            throw new NotImplementedException();
+            this.Board[0] = firstcard;
+            this.Board[1] = secondcard;
+            this.Board[2] = thirdcard;
         }
 
         public void AddTurn(Card turn)
         {
-            throw new NotImplementedException();
+            this.Board[3] = turn;
         }
 
         public void AddRiver(Card river)
         {
-            throw new NotImplementedException();
+            this.Board[4] = river;
+        }
+
+        public void SetCurrentBet(int bet)
+        {
+            this.CurrentBet = bet;
+
+            this.SetCallAmountsForAllPlayers();
+        }
+
+        private void SetCallAmountsForAllPlayers()
+        {
+            foreach (IPlayer player in this.Players)
+            {
+                player.SetCall(this.CurrentBet);
+            }
         }
     }
 }

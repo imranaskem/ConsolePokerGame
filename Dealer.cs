@@ -144,7 +144,24 @@ namespace ConsolePokerGame
                 {
                     console.WriteLine(this.Say(4));
                     console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
-                    player.Raise(table, console);
+                    console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
+                    console.WriteLine();
+
+                    bool parsed = false;
+
+                    do
+                    {
+                        try
+                        {
+                            parsed = player.Raise(table, console);
+                        }
+
+                        catch (InvalidOperationException ex)
+                        {
+                            console.WriteLine(ex.Message);
+                        }
+
+                    } while (!parsed);
                 }
             }
         }

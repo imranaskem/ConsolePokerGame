@@ -97,5 +97,27 @@ namespace ConsolePokerGame
 
             Assert.That(table.MinRaiseSize, Is.EqualTo(70));
         }
+
+        [Test]
+        public static void PlayerRaise()
+        {
+            List<string> response = new List<string> { "80" };
+
+            TestConsoleWrapper answers = new TestConsoleWrapper(response);
+
+            List<IPlayer> players = new List<IPlayer>();
+
+            players.Add(new TestPlayer(10));
+            players.Add(new TestPlayer(20));
+            players.Add(new TestPlayer(30));
+            players.Add(new TestPlayer(50));
+
+            TestTable table = new TestTable(players);
+
+            table.Players[3].Raise(table, answers);
+
+            Assert.That(table.Players[3].AmountBet, Is.EqualTo(80));
+            Assert.That(table.Players[0].AmountToCall, Is.EqualTo(70));
+        }
     }
 }

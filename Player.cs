@@ -96,29 +96,26 @@ namespace ConsolePokerGame
             this.HoleCards[1] = secondcard;
         }
 
-        public void Raise(ITable table, IConsole console)
+        public bool Raise(ITable table, IConsole console)
         {
-            console.WriteLine("Player has " + this.Chips.ToString() + " chips remaining");
-            console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
-
+            int amount;
+                                      
             var response = console.ReadLine();
 
-            int amount;
-
             if (!int.TryParse(response, out amount))
-            {
-                console.WriteLine();
-                console.WriteLine("That isn't a number, program exiting...");
-                Environment.Exit(1);
+            {                
+                throw new InvalidOperationException("That is not a number, please try again");
             }
 
             if (amount > this.Chips) throw new InvalidOperationException("Player does not have enough chips");
 
             if (amount < table.MinRaiseSize) throw new InvalidOperationException("Raise is not big enough, should be at least " + table.MinRaiseSize.ToString());
-
+                      
             this.AmountBet = amount;
 
             table.SetCurrentBet(amount);
+
+            return true;
         }
     }
 }

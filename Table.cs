@@ -134,7 +134,7 @@ namespace ConsolePokerGame
 
         public void AddToPot()
         {
-            foreach (Player player in this.Players)
+            foreach (IPlayer player in this.Players)
             {
                 this.MainPot += player.AmountBet; 
             }
@@ -166,7 +166,7 @@ namespace ConsolePokerGame
 
         private void SetCallAmountsForAllPlayers()
         {
-            foreach (Player player in this.Players)
+            foreach (IPlayer player in this.Players)
             {
                 player.SetCall(this.CurrentBet);
             }
