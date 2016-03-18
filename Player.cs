@@ -58,6 +58,8 @@ namespace ConsolePokerGame
         public void Fold()
         {
             this.InHand = false;
+            this.AmountBet = 0;
+            this.AmountToCall = 0;
 
             Array.Clear(this.HoleCards, 0, 2);            
         }

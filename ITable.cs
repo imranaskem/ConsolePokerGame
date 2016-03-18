@@ -17,8 +17,7 @@ namespace ConsolePokerGame
         string FullBoard { get; }
         int MinRaiseSize { get; }
                
-        void BlindsIn(IConsole console, IDealer dealer);
-        void AddToPot();
+        void BlindsIn(IConsole console, IDealer dealer);        
         void SetCurrentBet(int bet);
         void AddFlop(Card firstcard, Card secondcard, Card thirdcard);
         void AddTurn(Card turn);

@@ -24,7 +24,7 @@ namespace ConsolePokerGame
         {
             get
             {
-                if (this.Board.Contains(null)) throw new InvalidOperationException("No community cards exist");
+                if (this.Board[0] == null) throw new InvalidOperationException("Flop does not exist");
                 else
                 {
                     return this.Board[0].CardName + this.Board[1].CardName + this.Board[2].CardName;
@@ -36,7 +36,7 @@ namespace ConsolePokerGame
         {
             get
             {
-                if (this.Board.Contains(null)) throw new InvalidOperationException("No community cards exist");
+                if (this.Board[3] == null) throw new InvalidOperationException("Turn does not exist");
                 else
                 {
                     return this.Flop + this.Board[3].CardName;
@@ -48,7 +48,7 @@ namespace ConsolePokerGame
         {
             get
             {
-                if (this.Board.Contains(null)) throw new InvalidOperationException("No community cards exist");
+                if (this.Board[4] == null) throw new InvalidOperationException("River does not exist");
                 else
                 {
                     return this.Turn + this.Board[4].CardName;
@@ -61,6 +61,8 @@ namespace ConsolePokerGame
             get
             {
                 int minRaiseSize = this.bb;
+
+                if (this.CurrentBet == this.bb) return this.bb * 2;
 
                 var sortedlist = this.Players.OrderByDescending(a => a.AmountBet);
 
@@ -90,29 +92,35 @@ namespace ConsolePokerGame
             }
         }
 
+        public int RoundOver
+        {
+            get
+            {
+                int totalcallamount = 0;
+
+                foreach (IPlayer player in this.Players)
+                {
+                    if (player.InHand) totalcallamount += player.AmountToCall;
+                }
+
+                return totalcallamount;
+            }
+        }
+
         public Table(IConsole console)
         {
             this.Players = new List<IPlayer>();
-            this.MainPot = 0;
+            this.MainPot = this.sb;
             this.CurrentBet = 0;
             this.SBPlayer = 0;
             this.BBPlayer = 1;
-            this.Board = new Card[5];
-
-            int players;
+            this.Board = new Card[5];           
 
             console.WriteLine(this.instructions);
             console.WriteLine(this.numberOfPlayers);
             console.WriteLine();
 
-            var response = console.ReadLine();
-
-            if (!int.TryParse(response, out players))
-            {
-                console.WriteLine();
-                console.WriteLine("That isn't a number, program exiting...");
-                Environment.Exit(1);
-            }
+            int players = console.GetNumberInput();
 
             for (int i = 1; i <= players; i++)
             {
@@ -130,14 +138,11 @@ namespace ConsolePokerGame
             this.Players[this.BBPlayer].Blind(this.bb);
 
             this.SetCurrentBet(this.bb);            
-        }        
+        }
 
-        public void AddToPot()
+        private void AddToPot(int bet)
         {
-            foreach (IPlayer player in this.Players)
-            {
-                this.MainPot += player.AmountBet; 
-            }
+            this.MainPot += bet;
         }
 
         public void AddFlop(Card firstcard, Card secondcard, Card thirdcard)
@@ -161,6 +166,8 @@ namespace ConsolePokerGame
         {
             this.CurrentBet = bet;
 
+            this.AddToPot(bet);
+
             this.SetCallAmountsForAllPlayers();
         }
 
@@ -168,7 +175,7 @@ namespace ConsolePokerGame
         {
             foreach (IPlayer player in this.Players)
             {
-                player.SetCall(this.CurrentBet);
+                if (player.InHand) player.SetCall(this.CurrentBet);
             }
         }
     }

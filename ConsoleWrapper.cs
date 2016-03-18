@@ -36,9 +36,7 @@ namespace ConsolePokerGame
 
             if (!int.TryParse(response, out amount))
             {
-                throw new NotEnoughChipsException(
-                    "That is not a number, please try again",
-                    NotEnoughChipsException.Reason.InputIncorrect);
+                throw new TextInputIncorrectException("That is not a number, please try again");
             }
 
             return amount;

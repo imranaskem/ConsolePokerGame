@@ -69,6 +69,8 @@ namespace ConsolePokerGame
             this.Cards.DiscardDeck.Add(burncard);
 
             this.Cards.MainDeck.RemoveRange(0, 4);
+
+            this.firstAction = true;
         }
 
         public void DealTurn(ITable table, IConsole console)
@@ -84,6 +86,8 @@ namespace ConsolePokerGame
             this.Cards.DiscardDeck.Add(burncard);
 
             this.Cards.MainDeck.RemoveRange(0, 2);
+
+            this.firstAction = true;
         }
 
         public void DealRiver(ITable table, IConsole console)
@@ -99,18 +103,34 @@ namespace ConsolePokerGame
             this.Cards.DiscardDeck.Add(burncard);
 
             this.Cards.MainDeck.RemoveRange(0, 2);
+
+            this.firstAction = true;
+        }
+
+        public void MoveActionToNextPlayer(ITable table)
+        {
+            this.ActionOnPlayer++;
+
+            if (this.ActionOnPlayer > (table.Players.Count - 1)) this.ActionOnPlayer = 0;
         }
 
         public void Action(IPlayer player, ITable table, IConsole console)
         {
-            console.WriteLine("The pot is " + table.MainPot.ToString());
+            console.WriteLine();
+            console.WriteLine(player.Name);
             console.WriteLine("Your holecards are: " + player.Hand);
+            console.WriteLine("The pot is " + table.MainPot.ToString());
 
             if (this.firstAction)
             {
                 console.WriteLine(this.Say(1));
 
                 var response = console.ReadLine();
+
+                if (this.check.Contains(response))
+                {
+                    return;
+                }
 
                 if (this.bet.Contains(response))
                 {
@@ -131,53 +151,60 @@ namespace ConsolePokerGame
                             parsed = false;
                             console.WriteLine(ex.Message);
                         }
-                    }
-                    while (!parsed);                    
+                    } while (!parsed);
 
                     this.firstAction = false;
                 }
+                else throw new TextInputIncorrectException("Command was incorrect please try again");
             }
             else
             {
-                console.WriteLine(this.Say(2));
-
-                var response = console.ReadLine();
-
-                if (this.fold.Contains(response))
+                if (!this.firstAction)
                 {
-                    this.Cards.DiscardDeck.AddRange(player.HoleCards);
-                    player.Fold();
-                }
+                    if (player.AmountToCall > 0) console.WriteLine("Amount to call is " + player.AmountToCall.ToString());
 
-                if (this.call.Contains(response))
-                {
-                    player.Call();
-                }
+                    console.WriteLine(this.Say(2));
 
-                if (this.raise.Contains(response))
-                {
-                    console.WriteLine(this.Say(4));
-                    console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
-                    console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
-                    console.WriteLine();
+                    var response = console.ReadLine();
 
-                    bool parsed = true;
-
-                    do
+                    if (this.fold.Contains(response))
                     {
-                        try
-                        {
-                            player.Raise(table, console);
-                        }
+                        this.Cards.DiscardDeck.AddRange(player.HoleCards);
+                        player.Fold();
+                    }
 
-                        catch (NotEnoughChipsException ex)
-                        {
-                            parsed = false;
-                            console.WriteLine(ex.Message);
-                        }
+                    if (this.call.Contains(response))
+                    {
+                        player.Call();
+                    }
 
-                    } while (!parsed);
+                    if (this.raise.Contains(response))
+                    {
+                        console.WriteLine(this.Say(4));
+                        console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
+                        console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
+                        console.WriteLine();
+
+                        bool parsed = true;
+
+                        do
+                        {
+                            try
+                            {
+                                player.Raise(table, console);
+                            }
+
+                            catch (NotEnoughChipsException ex)
+                            {
+                                parsed = false;
+                                console.WriteLine(ex.Message);
+                                console.WriteLine("Please try again");
+                            }
+
+                        } while (!parsed);
+                    }                    
                 }
+                else throw new TextInputIncorrectException("Command was incorrect please try again");
             }
         }
     }
