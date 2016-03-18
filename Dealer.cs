@@ -116,9 +116,23 @@ namespace ConsolePokerGame
                 {
                     console.WriteLine(this.Say(3));
                     console.WriteLine("Player has " + player.Chips.ToString() + " chips remaining");
-                    player.Bet(table, console);
 
-                    table.SetCurrentBet(player.AmountBet);
+                    bool parsed = true;
+
+                    do
+                    {
+                        try
+                        {
+                            player.Bet(table, console);
+                        }
+
+                        catch (NotEnoughChipsException ex)
+                        {
+                            parsed = false;
+                            console.WriteLine(ex.Message);
+                        }
+                    }
+                    while (!parsed);                    
 
                     this.firstAction = false;
                 }
@@ -147,17 +161,18 @@ namespace ConsolePokerGame
                     console.WriteLine("Minimum raise size is " + table.MinRaiseSize.ToString());
                     console.WriteLine();
 
-                    bool parsed = false;
+                    bool parsed = true;
 
                     do
                     {
                         try
                         {
-                            parsed = player.Raise(table, console);
+                            player.Raise(table, console);
                         }
 
-                        catch (InvalidOperationException ex)
+                        catch (NotEnoughChipsException ex)
                         {
+                            parsed = false;
                             console.WriteLine(ex.Message);
                         }
 

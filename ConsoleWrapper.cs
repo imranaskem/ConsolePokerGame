@@ -27,5 +27,21 @@ namespace ConsolePokerGame
         {
             return Console.ReadLine();
         }
+
+        public int GetNumberInput()
+        {
+            int amount;
+
+            var response = this.ReadLine();
+
+            if (!int.TryParse(response, out amount))
+            {
+                throw new NotEnoughChipsException(
+                    "That is not a number, please try again",
+                    NotEnoughChipsException.Reason.InputIncorrect);
+            }
+
+            return amount;
+        }
     }
 }

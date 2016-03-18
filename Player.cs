@@ -44,23 +44,15 @@ namespace ConsolePokerGame
             console.WriteLine("Player has " + this.Chips.ToString() + " chips remaining");
             console.WriteLine("Minimum bet size is " + table.MinRaiseSize.ToString());
 
-            var response = console.ReadLine();
-
-            int amount;
-
-            if (!int.TryParse(response, out amount))
-            {
-                console.WriteLine();
-                console.WriteLine("That isn't a number, program exiting...");
-                Environment.Exit(1);
-            }
+            int amount = console.GetNumberInput();
 
             if (amount <= this.Chips)
             {
                 this.AmountBet = amount;
                 this.Chips -= amount;
+                table.SetCurrentBet(amount);
             }
-            else throw new InvalidOperationException("Player does not have enough chips");            
+            else throw new NotEnoughChipsException("Player does not have enough chips", NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);            
         }
 
         public void Fold()
@@ -96,26 +88,21 @@ namespace ConsolePokerGame
             this.HoleCards[1] = secondcard;
         }
 
-        public bool Raise(ITable table, IConsole console)
+        public void Raise(ITable table, IConsole console)
         {
-            int amount;
-                                      
-            var response = console.ReadLine();
+            int amount = console.GetNumberInput();
 
-            if (!int.TryParse(response, out amount))
-            {                
-                throw new InvalidOperationException("That is not a number, please try again");
-            }
+            if (amount > this.Chips) throw new NotEnoughChipsException(
+                "Player does not have enough chips", 
+                NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);
 
-            if (amount > this.Chips) throw new InvalidOperationException("Player does not have enough chips");
-
-            if (amount < table.MinRaiseSize) throw new InvalidOperationException("Raise is not big enough, should be at least " + table.MinRaiseSize.ToString());
+            if (amount < table.MinRaiseSize) throw new NotEnoughChipsException(
+                "Raise is not big enough, should be at least " + table.MinRaiseSize.ToString(), 
+                NotEnoughChipsException.Reason.RaiseNotBigEnough);
                       
             this.AmountBet = amount;
 
-            table.SetCurrentBet(amount);
-
-            return true;
+            table.SetCurrentBet(amount);            
         }
     }
 }

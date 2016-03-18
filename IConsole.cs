@@ -12,5 +12,6 @@ namespace ConsolePokerGame
         void WriteLine();
         void WriteLine(string message);
         string ReadLine();
+        int GetNumberInput();
     }
 }
