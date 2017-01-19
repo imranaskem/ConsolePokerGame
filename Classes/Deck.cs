@@ -11,7 +11,7 @@ namespace ConsolePokerGame
         public List<Card> MainDeck { get; private set; }
         public List<Card> DiscardDeck { get; private set; }
 
-        public Deck ()
+        public Deck()
         {
             this.MainDeck = new List<Card>();
             this.DiscardDeck = new List<Card>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsolePokerGame.Classes;
 
 namespace ConsolePokerGame
 {
@@ -12,15 +13,13 @@ namespace ConsolePokerGame
         {           
             ConsoleWrapper console = new ConsoleWrapper();
 
-            Table table = new Table(console);
-
-            Dealer dealer = new Dealer();                       
+            GameTracker gameTracker = new GameTracker(console);
 
             //Pre-flop
 
-            table.BlindsIn(console, dealer);
+            gameTracker.BlindsIn();
 
-            dealer.DealToPlayers(table, console);
+            gameTracker.DealToPlayers();
 
             do
             {

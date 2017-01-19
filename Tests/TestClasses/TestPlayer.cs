@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsolePokerGame.Enums;
 
 namespace ConsolePokerGame.Tests
 {
@@ -15,6 +16,7 @@ namespace ConsolePokerGame.Tests
         public int AmountBet { get; set; }
         public int AmountToCall { get; set; }
         public Card[] HoleCards { get; set; }
+        public Position PlayerPosition { get; set; }
 
         public string Hand
         {
@@ -27,7 +29,7 @@ namespace ConsolePokerGame.Tests
                     return hand;
                 }
             }
-        }
+        }        
 
         public TestPlayer()
         {

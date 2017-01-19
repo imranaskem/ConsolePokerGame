@@ -1,15 +1,17 @@
-﻿using ConsolePokerGame;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsolePokerGame.Interfaces;
+using ConsolePokerGame.Enums;
 
-namespace ConsolePokerGame.Tests
+namespace ConsolePokerGame.Classes
 {
-    public class TestGameTracker : IGameTracker
-    {
+    public class GameTracker : IGameTracker
+    {        
+        private IConsole _console { get; set; }
+
         private readonly int sb = 2;
         private readonly int bb = 5;
 
@@ -27,19 +29,18 @@ namespace ConsolePokerGame.Tests
         private string[] fold = { "f", "F", "fold", "Fold" };
         private string[] raise = { "r", "R", "raise", "Raise" };
 
-        public int ActionOnPlayer { get; private set; }
+        public int ActionOnPlayer { get; private set; }  
         public int CurrentBet { get; private set; }
         public int MainPot { get; private set; }
         public int MinRaiseSize { get; private set; }
         public string Flop { get; private set; }
-        public string Turn { get; private set; }
+        public string Turn{ get; private set; }
         public string FullBoard { get; private set; }
         public Card[] Board { get; private set; }
-        public Deck Cards { get; private set; }
-        public IConsole _console { get; private set; }
+        public Deck Cards{ get; private set; }
         public List<IPlayer> Players { get; private set; }
 
-        public TestGameTracker(IConsole console)
+        public GameTracker(IConsole console)
         {
             this.ActionOnPlayer = 0;
             this.CurrentBet = 0;
@@ -110,7 +111,25 @@ namespace ConsolePokerGame.Tests
 
         public void DealToPlayers()
         {
-            throw new NotImplementedException();
+            int players = this.Players.Count;
+            int count = 0;
+
+            foreach (var player in this.Players)
+            {
+                var firstcard = this.Cards.MainDeck[count];
+                firstcard.SetStatusToPlayer();
+
+                var secondcard = this.Cards.MainDeck[count + players];
+                secondcard.SetStatusToPlayer();
+
+                player.TakeCards(firstcard, secondcard);
+
+                this._console.WriteLine($"{player.Name} you've been dealt {player.Hand}");
+
+                count++;
+            }
+
+            this.Cards.MainDeck.RemoveRange(0, players * 2);
         }
 
         public void DealTurn()

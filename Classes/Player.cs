@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsolePokerGame.Enums;
 
 namespace ConsolePokerGame
 {
     public class Player : IPlayer
     {
+        private IConsole _consoleWrap;
+        private string[] speech = { "Added their small blind of",
+            "Added their big blind of",
+            "Called the bet of",
+            "Bet",
+            "Raised to" };
+
+        public Position PlayerPosition { get; private set; }
         public string Name { get; private set; }
         public bool InHand { get; private set; }
         public int Chips { get; private set; }
@@ -28,7 +37,7 @@ namespace ConsolePokerGame
             }
         }
 
-        public Player (string name, int chips)
+        public Player (string name, int chips, int position, IConsole console)
         {
             this.Name = name;
             this.Chips = chips;
@@ -36,21 +45,28 @@ namespace ConsolePokerGame
             this.AmountBet = 0;
             this.InHand = true;
 
+            this._consoleWrap = console;         
+
+            if (Enum.IsDefined(typeof(Position), position))
+            {                
+                this.PlayerPosition = (Position) position;
+            }
+            else throw new ArgumentOutOfRangeException("position", $"Enum does not contain a value at {position}" );
+
             this.HoleCards = new Card[2] { null, null };          
         }       
 
-        public void Bet(ITable table, IConsole console)
+        public void Bet(int bet)
         {
-            console.WriteLine("Player has " + this.Chips.ToString() + " chips remaining");
-            console.WriteLine("Minimum bet size is " + table.MinRaiseSize.ToString());
+            this._consoleWrap.WriteLine($"Player has {this.Chips} chips remaining");
+            this._consoleWrap.WriteLine($"Minimum bet size is {bet}");
 
-            int amount = console.GetNumberInput();
+            int amount = this._consoleWrap.GetNumberInput();
 
             if (amount <= this.Chips)
             {
                 this.AmountBet = amount;
-                this.Chips -= amount;
-                table.SetCurrentBet(amount);
+                this.Chips -= amount;                
             }
             else throw new NotEnoughChipsException("Player does not have enough chips", NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);            
         }
@@ -80,6 +96,7 @@ namespace ConsolePokerGame
 
         public void Blind(int blind)
         {
+            this.Say((int) this.PlayerPosition, blind);
             this.Chips -= blind;
             this.AmountBet = blind;
         }
@@ -90,21 +107,30 @@ namespace ConsolePokerGame
             this.HoleCards[1] = secondcard;
         }
 
-        public void Raise(ITable table, IConsole console)
+        public void Raise(int minRaise)
         {
-            int amount = console.GetNumberInput();
+            int amount = this._consoleWrap.GetNumberInput();
 
-            if (amount > this.Chips) throw new NotEnoughChipsException(
-                "Player does not have enough chips", 
-                NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);
+            if (amount > this.Chips)
+            {
+                throw new NotEnoughChipsException(
+                    "Player does not have enough chips",
+                    NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);
+            }
 
-            if (amount < table.MinRaiseSize) throw new NotEnoughChipsException(
-                "Raise is not big enough, should be at least " + table.MinRaiseSize.ToString(), 
-                NotEnoughChipsException.Reason.RaiseNotBigEnough);
-                      
-            this.AmountBet = amount;
+            if (amount < minRaise)
+            {
+                throw new NotEnoughChipsException(
+                    $"Raise is not big enough, should be at least {bet}",
+                    NotEnoughChipsException.Reason.RaiseNotBigEnough);
+            }
+                                  
+            this.AmountBet = amount;            
+        }
 
-            table.SetCurrentBet(amount);            
+        private void Say(int index, int bet = 0)
+        {
+            this._consoleWrap.WriteLine($"{this.Name}: {this.speech[index]}");
         }
     }
 }

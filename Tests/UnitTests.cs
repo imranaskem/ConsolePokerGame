@@ -88,7 +88,7 @@ namespace ConsolePokerGame.Tests
             players.Add(new TestPlayer(50));
             players.Add(new TestPlayer(20));
 
-            TestTable table = new TestTable(players);
+            TestGameTracker table = new TestGameTracker(players);
 
             Assert.That(table.MinRaiseSize, Is.EqualTo(70));
         }
@@ -107,7 +107,7 @@ namespace ConsolePokerGame.Tests
             players.Add(new TestPlayer(30));
             players.Add(new TestPlayer(50));
 
-            TestTable table = new TestTable(players);
+            TestGameTracker table = new TestGameTracker(players);
 
             table.Players[3].Raise(table, answers);
 
@@ -124,7 +124,7 @@ namespace ConsolePokerGame.Tests
 
             TestPlayer player = new TestPlayer();                                   
 
-            TestTable table = new TestTable();
+            TestGameTracker table = new TestGameTracker();
 
             Assert.That(() => player.Raise(table, answers), Throws.Exception.TypeOf<NotEnoughChipsException>()
                 .With.Property("reason")
@@ -142,7 +142,7 @@ namespace ConsolePokerGame.Tests
 
             player.Chips = 100;
 
-            TestTable table = new TestTable();
+            TestGameTracker table = new TestGameTracker();
 
             Assert.That(() => player.Raise(table, answers), Throws.Exception.TypeOf<NotEnoughChipsException>()
                 .With.Property("reason")
@@ -158,7 +158,7 @@ namespace ConsolePokerGame.Tests
 
             TestPlayer player = new TestPlayer();                       
 
-            TestTable table = new TestTable();
+            TestGameTracker table = new TestGameTracker();
 
             Assert.That(() => player.Raise(table, answers), Throws.Exception.TypeOf<NotEnoughChipsException>()
                 .With.Property("reason")
