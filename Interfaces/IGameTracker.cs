@@ -13,9 +13,7 @@ namespace ConsolePokerGame.Interfaces
         int MainPot { get; }
         int CurrentBet { get; }
         List<IPlayer> Players { get; }
-        Card[] Board { get; }
-        string Flop { get; }
-        string Turn { get; }
+        List<Card> Board { get; }        
         string FullBoard { get; }
         int MinRaiseSize { get; }        
 
@@ -23,12 +21,8 @@ namespace ConsolePokerGame.Interfaces
         void Say(int index);
         void Action();
         void DealFlop();
-        void DealTurn();
-        void DealRiver();
+        void DealTurnOrRiver();        
         void BlindsIn();
-        void SetCurrentBet(int bet);
-        void AddFlop(Card firstcard, Card secondcard, Card thirdcard);
-        void AddTurn(Card turn);
-        void AddRiver(Card river);
+        void SetCurrentBet(int bet);        
     }
 }

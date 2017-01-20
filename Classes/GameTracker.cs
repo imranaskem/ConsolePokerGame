@@ -32,11 +32,9 @@ namespace ConsolePokerGame.Classes
         public int ActionOnPlayer { get; private set; }  
         public int CurrentBet { get; private set; }
         public int MainPot { get; private set; }
-        public int MinRaiseSize { get; private set; }
-        public string Flop { get; private set; }
-        public string Turn{ get; private set; }
+        public int MinRaiseSize { get; private set; }        
         public string FullBoard { get; private set; }
-        public Card[] Board { get; private set; }
+        public List<Card> Board { get; private set; }
         public Deck Cards{ get; private set; }
         public List<IPlayer> Players { get; private set; }
 
@@ -45,14 +43,12 @@ namespace ConsolePokerGame.Classes
             this.ActionOnPlayer = 0;
             this.CurrentBet = 0;
             this.MainPot = 0;
-            this.MinRaiseSize = 0;
-            this.Flop = null;
-            this.Turn = null;
+            this.MinRaiseSize = 0;            
             this.FullBoard = null;
             this._console = console;
             this.Cards = new Deck();
             this.Cards.MainDeck.Shuffle();
-            this.Board = new Card[5];
+            this.Board = new List<Card>();
             this.Players = new List<IPlayer>();
 
             this.Say(0);
@@ -62,22 +58,7 @@ namespace ConsolePokerGame.Classes
         public void Action()
         {
             throw new NotImplementedException();
-        }
-
-        public void AddFlop(Card firstcard, Card secondcard, Card thirdcard)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddRiver(Card river)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddTurn(Card turn)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public void BlindsIn()
         {
@@ -101,13 +82,35 @@ namespace ConsolePokerGame.Classes
 
         public void DealFlop()
         {
-            throw new NotImplementedException();
+            var burnCard = this.Cards.MainDeck[0];
+            var firstCard = this.Cards.MainDeck[1];
+            var secondCard = this.Cards.MainDeck[2];
+            var thirdCard = this.Cards.MainDeck[3];
+
+            this.Board.Add(firstCard);
+            this.Board.Add(secondCard);
+            this.Board.Add(thirdCard);
+
+            this.FullBoard = $"{firstCard} {secondCard} {thirdCard}";
+
+            this.Cards.DiscardDeck.Add(burnCard);
+
+            this.Cards.MainDeck.RemoveRange(0, 4);
         }
 
-        public void DealRiver()
+        public void DealTurnOrRiver()
         {
-            throw new NotImplementedException();
-        }
+            var burnCard = this.Cards.MainDeck[0];
+            var card = this.Cards.MainDeck[1];
+
+            this.Board.Add(card);
+
+            this.FullBoard += $"{card}";
+
+            this.Cards.DiscardDeck.Add(burnCard);
+
+            this.Cards.MainDeck.RemoveRange(0, 2);
+        }        
 
         public void DealToPlayers()
         {
@@ -130,11 +133,6 @@ namespace ConsolePokerGame.Classes
             }
 
             this.Cards.MainDeck.RemoveRange(0, players * 2);
-        }
-
-        public void DealTurn()
-        {
-            throw new NotImplementedException();
         }
 
         public void Say(int index)

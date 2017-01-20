@@ -113,7 +113,7 @@ namespace ConsolePokerGame.Tests
             throw new NotImplementedException();
         }
 
-        public void DealTurn()
+        public void DealTurnOrRiver()
         {
             throw new NotImplementedException();
         }
