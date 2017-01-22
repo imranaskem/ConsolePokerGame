@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace ConsolePokerGame.Enums
 {
-    public enum Position { SmallBlind, BigBlind, FirstToAct, Middle, Dealer }    
+    public enum Position { SmallBlind, BigBlind, UnderTheGun, UnderTheGunPlusOne, Middle, HiJack, CutOff, Dealer }    
 }

@@ -16,7 +16,7 @@ namespace ConsolePokerGame.Classes
         private readonly int bb = 5;
 
         private string[] speech = { "Welcome to the console poker game. When you are asked a question please respond with the letter or word of your selection.",
-            "How many players today?",
+            "How many players today? (Max of 8)",
             "Blinds in please, small is 2 and big is 5",
             "Check or bet?",
             "Call, fold or raise?",
@@ -32,7 +32,8 @@ namespace ConsolePokerGame.Classes
         public int ActionOnPlayer { get; private set; }  
         public int CurrentBet { get; private set; }
         public int MainPot { get; private set; }
-        public int MinRaiseSize { get; private set; }        
+        public int MinRaiseSize { get; private set; }
+        public int NumberOfPlayers { get; private set; }        
         public string FullBoard { get; private set; }
         public List<Card> Board { get; private set; }
         public Deck Cards{ get; private set; }
@@ -55,16 +56,61 @@ namespace ConsolePokerGame.Classes
         }
 
 
-        public void Action()
+        public void RoundOfAction(Position startingPlayer)
         {
-            throw new NotImplementedException();
-        }        
+            var positionNumber = (int) startingPlayer;
+
+            for (int i = positionNumber; i < this.NumberOfPlayers; i++)
+            {
+                var currentPlayer = this.Players.Single(p => p.PlayerPosition == (Position) i);
+
+                if (this.CurrentBet > 0)
+                {
+                    this.ActionFacingABet(currentPlayer);
+                }
+                else
+                {
+                    this.ActionWithNoPreviousBet(currentPlayer);
+                }
+            }
+        }   
+        
+        private void ActionFacingABet(IPlayer player)
+        {
+            this.Say(5);
+
+            var response = this._console.ReadLine();
+
+            if (this.fold.Contains(response))
+            {
+                var foldedCards = player.Fold();
+
+                foreach (var card in foldedCards)
+                {
+                    this.Cards.DiscardDeck.Add(card);
+                }
+
+                return;
+            }
+
+            if (this.call.Contains(response))
+            {
+                this.MainPot += player.Call(this.CurrentBet);
+
+                return;
+            }
+        }
+
+        private void ActionWithNoPreviousBet(IPlayer player)
+        {
+
+        }   
 
         public void BlindsIn()
         {
             this.DefineNumberOfPlayers();
 
-            this.Say(2);
+            this.Say(2);            
 
             foreach (var player in this.Players)
             {
@@ -78,6 +124,9 @@ namespace ConsolePokerGame.Classes
                     player.Blind(this.bb);
                 }
             }
+
+            this.CurrentBet = this.bb;
+            this.MinRaiseSize = this.bb - this.sb;
         }
 
         public void DealFlop()
@@ -96,6 +145,8 @@ namespace ConsolePokerGame.Classes
             this.Cards.DiscardDeck.Add(burnCard);
 
             this.Cards.MainDeck.RemoveRange(0, 4);
+
+            this.MinRaiseSize = this.bb;
         }
 
         public void DealTurnOrRiver()
@@ -110,6 +161,8 @@ namespace ConsolePokerGame.Classes
             this.Cards.DiscardDeck.Add(burnCard);
 
             this.Cards.MainDeck.RemoveRange(0, 2);
+
+            this.MinRaiseSize = this.bb;
         }        
 
         public void DealToPlayers()
@@ -138,32 +191,24 @@ namespace ConsolePokerGame.Classes
         public void Say(int index)
         {
             this._console.WriteLine(this.speech[index]);
-        }
-
-        public void SetCurrentBet(int bet)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         private void DefineNumberOfPlayers()
         {
             this.Say(1);
 
-            int players = this._console.GetNumberInput();
+            this.NumberOfPlayers = this._console.GetNumberInput();
 
-            for (int i = 1; i <= players; i++)
+            for (int i = 1; i <= this.NumberOfPlayers; i++)
             {
-                if (this.Players.Count > 4)
+                if (this.Players.Count == (this.NumberOfPlayers - 1))
                 {
-                    this.Players.Add(new Player("Player " + i.ToString(), 500, 3, this._console));
-                }
-                else if (this.Players.Count == (this.Players.Count - 1))
-                {
-                    this.Players.Add(new Player("Player " + i.ToString(), 500, 4, this._console));
+                    this.Players.Add(new Player("Player " + i.ToString(), 500, Position.Dealer, this._console));
                 }
                 else
                 {
-                    this.Players.Add(new Player("Player " + i.ToString(), 500, this.Players.Count, this._console));
+                    var position = (Position) this.Players.Count;
+                    this.Players.Add(new Player("Player " + i.ToString(), 500, position, this._console));
                 }
             }
         }

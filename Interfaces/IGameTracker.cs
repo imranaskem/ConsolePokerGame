@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsolePokerGame.Enums;
 
 namespace ConsolePokerGame.Interfaces
 {
@@ -12,17 +13,17 @@ namespace ConsolePokerGame.Interfaces
         int ActionOnPlayer { get; }
         int MainPot { get; }
         int CurrentBet { get; }
+        int MinRaiseSize { get; }   
+        int NumberOfPlayers { get; }     
         List<IPlayer> Players { get; }
         List<Card> Board { get; }        
         string FullBoard { get; }
-        int MinRaiseSize { get; }        
 
         void DealToPlayers();
         void Say(int index);
-        void Action();
+        void RoundOfAction(Position startingPlayer);
         void DealFlop();
         void DealTurnOrRiver();        
-        void BlindsIn();
-        void SetCurrentBet(int bet);        
+        void BlindsIn();             
     }
 }

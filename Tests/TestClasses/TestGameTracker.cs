@@ -58,7 +58,7 @@ namespace ConsolePokerGame.Tests
         }
 
 
-        public void Action()
+        public void RoundOfAction()
         {
             throw new NotImplementedException();
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsolePokerGame.Classes;
+using ConsolePokerGame.Enums;
 
 namespace ConsolePokerGame
 {
@@ -15,144 +16,24 @@ namespace ConsolePokerGame
 
             GameTracker gameTracker = new GameTracker(console);
 
-            //Pre-flop
+            //Setup
 
             gameTracker.BlindsIn();
 
             gameTracker.DealToPlayers();
 
-            do
-            {
-                int actionTracker = 0;
-
-                foreach (IPlayer player in table.Players)
-                {
-                    if (dealer.ActionOnPlayer == actionTracker && player.InHand)
-                    {
-                        bool parsed = true;
-
-                        do
-                        {
-                            try
-                            {
-                                dealer.Action(player, table, console);
-                                dealer.MoveActionToNextPlayer(table);
-                            }
-                            catch (TextInputIncorrectException ex)
-                            {
-                                console.WriteLine(ex.Message);
-                                parsed = false;
-                            }
-                        } while (!parsed);
-                    }
-                    actionTracker++;
-                }
-            } while (table.RoundOver > 0);
+            //Pre-flop
+            gameTracker.RoundOfAction(Position.UnderTheGun);
 
             //Flop
-
-            dealer.DealFlop(table, console);
-
-            do
-            {
-                int actionTracker = 0;
-
-                foreach (IPlayer player in table.Players)
-                {
-                    if (dealer.ActionOnPlayer == actionTracker && player.InHand)
-                    {
-                        console.WriteLine(table.Flop);
-
-                        bool parsed = true;
-
-                        do
-                        {
-                            try
-                            {
-                                dealer.Action(player, table, console);
-                                dealer.MoveActionToNextPlayer(table);
-                            }
-                            catch (TextInputIncorrectException ex)
-                            {
-                                console.WriteLine(ex.Message);
-                                parsed = false;
-                            }
-                        } while (!parsed);
-                    }
-
-                    actionTracker++;
-                }
-            } while (table.RoundOver > 0);
+            gameTracker.RoundOfAction(Position.SmallBlind);
 
             //Turn
-
-            dealer.DealTurn(table, console);
-
-            do
-            {
-                int actionTracker = 0;
-
-                foreach (IPlayer player in table.Players)
-                {
-                    if (dealer.ActionOnPlayer == actionTracker && player.InHand)
-                    {
-                        console.WriteLine(table.Turn);
-
-                        bool parsed = true;
-
-                        do
-                        {
-                            try
-                            {
-                                dealer.Action(player, table, console);
-                                dealer.MoveActionToNextPlayer(table);
-                            }
-                            catch (TextInputIncorrectException ex)
-                            {
-                                console.WriteLine(ex.Message);
-                                parsed = false;
-                            }
-                        } while (!parsed);
-                    }
-
-                    actionTracker++;
-                }
-            } while (table.RoundOver > 0);
+            gameTracker.RoundOfAction(Position.SmallBlind);
 
             //River
+            gameTracker.RoundOfAction(Position.SmallBlind);
 
-            dealer.DealRiver(table, console);
-
-            do
-            {
-                int actionTracker = 0;
-
-                foreach (IPlayer player in table.Players)
-                {
-                    if (dealer.ActionOnPlayer == actionTracker && player.InHand)
-                    {
-                        console.WriteLine(table.FullBoard);
-
-                        bool parsed = true;
-
-                        do
-                        {
-                            try
-                            {
-                                dealer.Action(player, table, console);
-                                dealer.MoveActionToNextPlayer(table);
-                            }
-                            catch (TextInputIncorrectException ex)
-                            {
-                                console.WriteLine(ex.Message);
-                                parsed = false;
-                            }
-                        } while (!parsed);
-                    }
-
-                    actionTracker++;
-                }
-            } while (table.RoundOver > 0);
         }
     }
 }
