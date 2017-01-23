@@ -156,7 +156,7 @@ namespace ConsolePokerGame.Classes
             this.Board.Add(secondCard);
             this.Board.Add(thirdCard);
 
-            this.FullBoard = $"{firstCard} {secondCard} {thirdCard}";
+            this.FullBoard = $"{firstCard} {secondCard} {thirdCard} ";
 
             this.Cards.DiscardDeck.Add(burnCard);
 
@@ -172,7 +172,7 @@ namespace ConsolePokerGame.Classes
 
             this.Board.Add(card);
 
-            this.FullBoard += $"{card}";
+            this.FullBoard += $"{card} ";
 
             this.Cards.DiscardDeck.Add(burnCard);
 
