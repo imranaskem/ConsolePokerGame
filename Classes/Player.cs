@@ -16,7 +16,7 @@ namespace ConsolePokerGame
             "Folds",
             "Called the bet of",
             "Checks",
-            "Bet",
+            "Bets",
             "Raised to" };
 
         public Position PlayerPosition { get; private set; }
@@ -45,7 +45,7 @@ namespace ConsolePokerGame
             this.HoleCards = new Card[2] { null, null };          
         }       
 
-        public int Bet(int minRaise)
+        public int Bet(int minRaise, bool facingABet = true)
         {
             this._consoleWrap.WriteLine($"Player has {this.Chips} chips remaining");
             this._consoleWrap.WriteLine($"Minimum bet size is {minRaise}");
@@ -73,7 +73,14 @@ namespace ConsolePokerGame
             this.AmountBet = amount;
             this.Chips -= amount;
 
-            this.Say(6, amount);
+            if (facingABet)
+            {
+                this.Say(6, amount);
+            }
+            else
+            {
+                this.Say(5, amount);
+            }
 
             return amount;
         }
@@ -140,6 +147,11 @@ namespace ConsolePokerGame
 
             this.Hand = $"{firstcard} {secondcard}";
         }        
+
+        public void Check()
+        {
+            this.Say(4);
+        }
 
         private void Say(int index, int bet = 0)
         {

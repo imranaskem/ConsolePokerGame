@@ -49,10 +49,8 @@
   <ItemGroup>
     <Compile Include="Classes\Card.cs" />
     <Compile Include="Classes\ConsoleWrapper.cs" />
-    <Compile Include="Classes\Dealer.cs" />
     <Compile Include="Classes\Deck.cs" />
     <Compile Include="Classes\GameTracker.cs" />
-    <Compile Include="Classes\Table.cs" />
     <Compile Include="Enums\CardStatus.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Interfaces\IConsole.cs" />
@@ -68,7 +66,7 @@
     <Compile Include="Exceptions\TextInputIncorrectException.cs" />
     <Compile Include="Tests\TestClasses\TestConsoleWrapper.cs" />
     <Compile Include="Tests\TestClasses\TestPlayer.cs" />
-    <Compile Include="Tests\TestClasses\TestTable.cs" />
+    <Compile Include="Tests\TestClasses\TestGameTracker.cs" />
     <Compile Include="Tests\UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>

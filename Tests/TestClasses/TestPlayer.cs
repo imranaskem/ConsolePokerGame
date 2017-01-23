@@ -10,107 +10,129 @@ namespace ConsolePokerGame.Tests
 {
     public class TestPlayer : IPlayer
     {
+        private IConsole _consoleWrap { get; set; }
+
+        private string[] speech = { "Added their small blind of",
+            "Added their big blind of",
+            "Folds",
+            "Called the bet of",
+            "Checks",
+            "Bets",
+            "Raised to" };
+
+        public Position PlayerPosition { get; set; }
         public string Name { get; set; }
         public bool InHand { get; set; }
         public int Chips { get; set; }
         public int AmountBet { get; set; }
-        public int AmountToCall { get; set; }
         public Card[] HoleCards { get; set; }
-        public Position PlayerPosition { get; set; }
+        public string Hand { get; set; }
 
-        public string Hand
-        {
-            get
-            {
-                if (this.HoleCards.Contains(null)) throw new InvalidOperationException("Player does not have cards");
-                else
-                {
-                    string hand = this.HoleCards[0].CardName + this.HoleCards[1].CardName;
-                    return hand;
-                }
-            }
-        }        
-
-        public TestPlayer()
+        public TestPlayer(IConsole console)
         {
             this.Name = string.Empty;
             this.Chips = 0;
-            this.AmountToCall = 0;
+            
             this.AmountBet = 0;
             this.InHand = true;
+            this._consoleWrap = console;
+                        
+            this.PlayerPosition = Position.SmallBlind;            
 
             this.HoleCards = new Card[2] { null, null };
-        }
+        }        
 
-        public TestPlayer(int bet)
+        public int Bet(int minRaise, bool facingABet = true)
         {
-            this.Name = string.Empty;
-            this.Chips = 500;
-            this.AmountToCall = 0;
-            this.AmountBet = bet;
-            this.InHand = true;
+            this._consoleWrap.WriteLine($"Player has {this.Chips} chips remaining");
+            this._consoleWrap.WriteLine($"Minimum bet size is {minRaise}");
+            this._consoleWrap.WriteLine($"You can go all in regardless of the minimum bet size by inputting {this.Chips}");
 
-            this.HoleCards = new Card[2] { null, null };
-        }
+            int amount = 0;
 
-        public TestPlayer(string name, int chips)
-        {
-            this.Name = name;
-            this.Chips = chips;
-            this.AmountToCall = 0;
-            this.AmountBet = 0;
-            this.InHand = true;
+            var parsed = true;
 
-            this.HoleCards = new Card[2] { null, null };
-        }
-
-        public void Bet(ITable table, IConsole console)
-        {
-            console.WriteLine("Player has " + this.Chips.ToString() + " chips remaining");
-            console.WriteLine("Minimum bet size is " + table.MinRaiseSize.ToString());
-
-            var response = console.ReadLine();
-
-            int amount;
-
-            if (!int.TryParse(response, out amount))
+            do
             {
-                console.WriteLine();
-                console.WriteLine("That isn't a number, program exiting...");
-                Environment.Exit(1);
+                try
+                {
+                    amount = this.IsBetLegal(minRaise);
+                    parsed = true;
+                }
+                catch (NotEnoughChipsException e)
+                {
+                    this._consoleWrap.WriteLine(e.Message);
+                    parsed = false;
+                }
+
+            } while (parsed);
+
+            this.AmountBet = amount;
+            this.Chips -= amount;
+
+            if (facingABet)
+            {
+                this.Say(6, amount);
+            }
+            else
+            {
+                this.Say(5, amount);
             }
 
-            if (amount <= this.Chips)
-            {
-                this.AmountBet = amount;
-                this.Chips -= amount;
-            }
-            else throw new InvalidOperationException("Player does not have enough chips");
+            return amount;
         }
 
-        public void Fold()
+        private int IsBetLegal(int minRaise)
+        {
+            int amount = this._consoleWrap.GetNumberInput();
+
+            if (amount == this.Chips)
+            {
+                this._consoleWrap.WriteLine($"{this.Name} is all in");
+                return amount;
+            }
+
+            if (amount > this.Chips)
+            {
+                throw new NotEnoughChipsException("Player does not have enough chips", NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);
+            }
+
+            if (amount < minRaise)
+            {
+                throw new NotEnoughChipsException("Raise size too small", NotEnoughChipsException.Reason.RaiseNotBigEnough);
+            }
+
+            return amount;
+        }
+
+        public IEnumerable<Card> Fold()
         {
             this.InHand = false;
+            this.AmountBet = 0;
+
+            var cards = this.HoleCards;
 
             Array.Clear(this.HoleCards, 0, 2);
+
+            this.Say(2);
+
+            return cards;
         }
 
-        public void SetCall(int bet)
+        public int Call(int currentBet)
         {
-            int callAmount = bet - this.AmountBet;
-            this.AmountToCall = callAmount;
-        }
-
-        public void Call()
-        {
-            int callAmount = this.AmountToCall - this.AmountBet;
+            int callAmount = currentBet - this.AmountBet;
             this.Chips -= callAmount;
-            this.AmountBet = this.AmountToCall;
-            this.AmountToCall = 0;
+            this.AmountBet = currentBet;
+
+            this.Say(3, callAmount);
+
+            return callAmount;
         }
 
         public void Blind(int blind)
         {
+            this.Say((int)this.PlayerPosition, blind);
             this.Chips -= blind;
             this.AmountBet = blind;
         }
@@ -119,25 +141,25 @@ namespace ConsolePokerGame.Tests
         {
             this.HoleCards[0] = firstcard;
             this.HoleCards[1] = secondcard;
+
+            this.Hand = $"{firstcard} {secondcard}";
         }
 
-        public void Raise(ITable table, IConsole console)
+        public void Check()
         {
-            int amount = console.GetNumberInput();
+            this.Say(4);
+        }
 
-            if (amount > this.Chips)
-                throw new NotEnoughChipsException(
-                    "Player does not have enough chips",
-                    NotEnoughChipsException.Reason.PlayerDoesNotHaveEnoughChips);
-
-            if (amount < table.MinRaiseSize)
-                throw new NotEnoughChipsException(
-                    "Raise is not big enough, should be at least " + table.MinRaiseSize.ToString(),
-                    NotEnoughChipsException.Reason.RaiseNotBigEnough);
-
-            this.AmountBet = amount;
-
-            table.SetCurrentBet(amount);
+        private void Say(int index, int bet = 0)
+        {
+            if (bet == 0)
+            {
+                this._consoleWrap.WriteLine($"{this.Name}: {this.speech[index]}");
+            }
+            else
+            {
+                this._consoleWrap.WriteLine($"{this.Name}: {this.speech[index]} {bet}");
+            }
         }
     }
 }

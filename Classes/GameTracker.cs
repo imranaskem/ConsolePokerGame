@@ -21,8 +21,7 @@ namespace ConsolePokerGame.Classes
             "Check or bet?",
             "Call, fold or raise?",
             "How much?",
-            "How much would you like to raise? (Please enter the total raise size)"};
-        private bool firstAction = false;
+            "How much would you like to raise? (Please enter the total raise size)"};        
         private string[] check = { "c", "C", "check", "Check" };
         private string[] call = { "c", "C", "call", "Call" };
         private string[] bet = { "b", "B", "bet", "Bet" };
@@ -53,16 +52,16 @@ namespace ConsolePokerGame.Classes
             this.Players = new List<IPlayer>();
 
             this.Say(0);
+            this.DefineNumberOfPlayers();
         }
 
 
         public void RoundOfAction(Position startingPlayer)
         {
-            var positionNumber = (int) startingPlayer;
-
-            for (int i = positionNumber; i < this.NumberOfPlayers; i++)
+            for (var i = startingPlayer; i <= Position.Dealer; i++)
             {
-                var currentPlayer = this.Players.Single(p => p.PlayerPosition == (Position) i);
+                var currentPlayer = this.Players
+                    .Single(p => p.PlayerPosition == i && p.InHand == true);
 
                 if (this.CurrentBet > 0)
                 {
@@ -77,7 +76,7 @@ namespace ConsolePokerGame.Classes
         
         private void ActionFacingABet(IPlayer player)
         {
-            this.Say(5);
+            this.Say(4);
 
             var response = this._console.ReadLine();
 
@@ -99,17 +98,34 @@ namespace ConsolePokerGame.Classes
 
                 return;
             }
+
+            if (this.raise.Contains(response))
+            {
+                this.MainPot += player.Bet(this.MinRaiseSize);
+
+                return;
+            }
         }
 
         private void ActionWithNoPreviousBet(IPlayer player)
         {
+            this.Say(3);
 
+            var response = this._console.ReadLine();
+
+            if (this.check.Contains(response))
+            {
+                player.Check();
+            }
+
+            if (this.bet.Contains(response))
+            {
+                this.MainPot += player.Bet(this.MinRaiseSize, false);
+            }
         }   
 
         public void BlindsIn()
         {
-            this.DefineNumberOfPlayers();
-
             this.Say(2);            
 
             foreach (var player in this.Players)
