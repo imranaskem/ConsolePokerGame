@@ -101,7 +101,11 @@ namespace ConsolePokerGame.Classes
 
             if (this.raise.Contains(response))
             {
-                this.MainPot += player.Bet(this.MinRaiseSize);
+                var raise = player.Bet(this.MinRaiseSize);
+
+                this.CurrentBet = raise;
+
+                this.MainPot += raise;
 
                 return;
             }
@@ -120,7 +124,11 @@ namespace ConsolePokerGame.Classes
 
             if (this.bet.Contains(response))
             {
-                this.MainPot += player.Bet(this.MinRaiseSize, false);
+                var bet = player.Bet(this.MinRaiseSize, false);
+
+                this.CurrentBet = bet;
+
+                this.MainPot += bet;
             }
         }   
 
